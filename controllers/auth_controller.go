@@ -39,7 +39,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	//비밀번호가 8자 이상인지 확인
-	passwordRegex := `^{8,}$`
+	passwordRegex := `^.{8,}$`
 
 	matchedPassword, err := regexp.MatchString(passwordRegex, input.Password)
 	if err != nil {
