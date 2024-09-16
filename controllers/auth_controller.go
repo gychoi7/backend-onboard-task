@@ -22,13 +22,17 @@ type SignUpRequest struct {
 }
 
 // @Summary SignUp
-// @Description SingUp
+// @Description SignUp
 // @Tags users
 // @Accept  json
 // @Param body body SignUpRequest true "이메일과 비밀번호"
 // @Produce  json
 // @Success 200 {string} string "회원가입에 성공했습니다."
 // @Failure 400 {string} string "이메일 형식이 올바르지 않습니다."
+// @Failure 400 {string} string "중복된 이메일입니다."
+// @Failure 400 {string} string "비밀번호는 8자 이상이어야 합니다."
+// @Failure 400 {string} string "비밀번호 암호화에 실패했습니다."
+// @Failure 500 {string} string "회원가입에 실패했습니다."
 // @Router /users/signup [post]
 func SignUp(c *gin.Context) {
 	var input SignUpRequest
@@ -99,7 +103,11 @@ func SignUp(c *gin.Context) {
 // @Param body body SignInRequest true "이메일과 비밀번호"
 // @Produce  json
 // @Success 200 {string} string "로그인에 성공했습니다."
-// @Failure 400 {string} string "이메일 형식이 올바르지 않습니다."
+// @Failure 401 {string} string "가입하지 않은 이메일입니다."
+// @Failure 401 {string} string "비밀번호가 올바르지 않습니다."
+// @Failure 500 {string} string "토큰 생성에 실패했습니다."
+// @Failure 500 {string} string "리프레시 토큰 생성에 실패했습니다."
+// @Failure 500 {string} string "리프레시 토큰 저장에 실패했습니다."
 // @Router /users/signin [post]
 func SignIn(c *gin.Context) {
 	var input SignInRequest

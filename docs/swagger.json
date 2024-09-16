@@ -293,8 +293,14 @@
                             "type": "string"
                         }
                     },
-                    "400": {
-                        "description": "이메일 형식이 올바르지 않습니다.",
+                    "401": {
+                        "description": "비밀번호가 올바르지 않습니다.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "리프레시 토큰 저장에 실패했습니다.",
                         "schema": {
                             "type": "string"
                         }
@@ -304,7 +310,7 @@
         },
         "/users/signup": {
             "post": {
-                "description": "SingUp",
+                "description": "SignUp",
                 "consumes": [
                     "application/json"
                 ],
@@ -334,7 +340,13 @@
                         }
                     },
                     "400": {
-                        "description": "이메일 형식이 올바르지 않습니다.",
+                        "description": "비밀번호 암호화에 실패했습니다.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "회원가입에 실패했습니다.",
                         "schema": {
                             "type": "string"
                         }
