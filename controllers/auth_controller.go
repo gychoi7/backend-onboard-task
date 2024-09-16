@@ -10,11 +10,28 @@ import (
 	"time"
 )
 
+
+type SignInRequest struct {
+    Email    string `json:"email" binding:"required"`
+    Password string `json:"password" binding:"required"`
+}
+
+type SignUpRequest struct {
+    Email    string `json:"email" binding:"required"`
+    Password string `json:"password" binding:"required"`
+}
+
+// @Summary SignUp
+// @Description SingUp
+// @Tags users
+// @Accept  json
+// @Param body body SignUpRequest true "이메일과 비밀번호"
+// @Produce  json
+// @Success 200 {string} string "회원가입에 성공했습니다."
+// @Failure 400 {string} string "이메일 형식이 올바르지 않습니다."
+// @Router /users/signup [post]
 func SignUp(c *gin.Context) {
-	var input struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+	var input SignUpRequest
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -75,12 +92,17 @@ func SignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "회원가입에 성공했습니다."})
 }
 
-// 로그인 함수
+// @Summary SignIn
+// @Description SignIn
+// @Tags users
+// @Accept  json
+// @Param body body SignInRequest true "이메일과 비밀번호"
+// @Produce  json
+// @Success 200 {string} string "로그인에 성공했습니다."
+// @Failure 400 {string} string "이메일 형식이 올바르지 않습니다."
+// @Router /users/signin [post]
 func SignIn(c *gin.Context) {
-	var input struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+	var input SignInRequest
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return

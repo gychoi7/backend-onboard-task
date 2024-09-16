@@ -9,6 +9,17 @@ import (
 	"time"
 )
 
+// @Summary GetPosts
+// @Description GetPosts
+// @Tags posts
+// @Accept  json
+// @Param Authorization header string true "Bearer {token}"
+// @Param page query int false "페이지 번호"
+// @Param limits query int false "페이지 당 게시글 수"
+// @Produce  json
+// @Success 200 {object} object "게시글 목록"
+// @Failure 401 {string} string "인증되지 않은 사용자입니다."
+// @Router /posts [get]
 func GetPosts(c *gin.Context) {
 	authUserID, exists := c.Get("userID")
 	if !exists {
@@ -53,6 +64,22 @@ func GetPosts(c *gin.Context) {
 	})
 }
 
+type PostRequest struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+// @Summary CreatePost
+// @Description CreatePost
+// @Tags posts
+// @Accept  json
+// @Param Authorization header string true "Bearer {token}"
+// @Param body body PostRequest true "제목과 내용"
+// @Produce  json
+// @Success 201 {string} string "게시글이 성공적으로 생성되었습니다."
+// @Failure 400 {string} string "제목과 내용을 모두 입력해야 합니다."
+// @Failure 401 {string} string "인증되지 않은 사용자입니다."
+// @Router /posts [post]
 func CreatePost(c *gin.Context) {
 	authUserID, exists := c.Get("userID")
 	if !exists {
@@ -62,10 +89,7 @@ func CreatePost(c *gin.Context) {
 
 	userID := authUserID.(uint)
 
-	var input struct {
-		Title   string `json:"title"`
-		Content string `json:"content"`
-	}
+	var input PostRequest
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "잘못된 입력 값입니다."})
@@ -94,6 +118,20 @@ func CreatePost(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "게시글이 성공적으로 생성되었습니다."})
 }
 
+// @Summary GetPost
+// @Description GetPost
+// @Tags posts
+// @Accept  json
+// @Param Authorization header string true "Bearer {token}"
+// @Param id path int true "게시글 ID"
+// @Produce  json
+// @Success 200 {object} object "게시글"
+// @Failure 400 {string} string "게시글 ID가 필요합니다."
+// @Failure 400 {string} string "잘못된 게시글 ID입니다."
+// @Failure 401 {string} string "인증되지 않은 사용자입니다."
+// @Failure 404 {string} string "게시글을 찾을 수 없습니다."
+// @Router /posts/{id} [get]
+
 func GetPost(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
@@ -118,6 +156,23 @@ func GetPost(c *gin.Context) {
 	c.JSON(http.StatusOK, post)
 }
 
+// @Summary UpdatePost
+// @Description UpdatePost
+// @Tags posts
+// @Accept  json
+// @Param Authorization header string true "Bearer {token}"
+// @Param id path int true "게시글 ID"
+// @Param body body PostRequest true "제목과 내용"
+// @Produce  json
+// @Success 200 {string} string "게시글이 성공적으로 수정되었습니다."
+// @Failure 400 {string} string "게시글 ID가 필요합니다."
+// @Failure 400 {string} string "잘못된 게시글 ID입니다."
+// @Failure 400 {string} string "잘못된 입력 값입니다."
+// @Failure 401 {string} string "인증되지 않은 사용자입니다."
+// @Failure 403 {string} string "게시글 수정 권한이 없습니다."
+// @Failure 404 {string} string "게시글을 찾을 수 없습니다."
+// @Failure 500 {string} string "게시글 수정 중 오류가 발생했습니다."
+// @Router /posts/{id} [put]
 func UpdatePost(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
@@ -133,10 +188,7 @@ func UpdatePost(c *gin.Context) {
 
 	postID := uint(parseID)
 
-	var input struct {
-		Title   string `json:"title"`
-		Content string `json:"content"`
-	}
+	var input PostRequest
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "잘못된 입력 값입니다."})
@@ -164,6 +216,21 @@ func UpdatePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "게시글이 성공적으로 수정되었습니다."})
 }
 
+// @Summary DeletePost
+// @Description DeletePost
+// @Tags posts
+// @Accept  json
+// @Param Authorization header string true "Bearer {token}"
+// @Param id path int true "게시글 ID"
+// @Produce  json
+// @Success 200 {string} string "게시글이 성공적으로 삭제되었습니다."
+// @Failure 400 {string} string "게시글 ID가 필요합니다."
+// @Failure 400 {string} string "잘못된 게시글 ID입니다."
+// @Failure 401 {string} string "인증되지 않은 사용자입니다."
+// @Failure 403 {string} string "게시글 삭제 권한이 없습니다."
+// @Failure 404 {string} string "게시글을 찾을 수 없습니다."
+// @Failure 500 {string} string "게시글 삭제 중 오류가 발생했습니다."
+// @Router /posts/{id} [delete]
 func DeletePost(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
